@@ -25,14 +25,5 @@ jobs:
       - name: Compile
         run: sbt clean compile
 
-      - name: Check publication
-        run: |
-          pwd
-          cd ~
-          pwd
-          cd /home/runner/work/sbt-rust/sbt-rust
-          sbt publishM2 publishLocal 'show ivyPaths'
-          ls -al ~
-          ls -R ~/.m2
-          ls -R ~/.ivy2
-          ls -R /home/runner/work/sbt-rust/sbt-rust
+      - name: Test
+        run: sbt test scripted
