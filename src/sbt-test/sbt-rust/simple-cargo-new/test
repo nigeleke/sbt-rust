@@ -3,7 +3,7 @@ $ absent target/debug/simple-cargo-new
 $ absent target/debug/simple-cargo-new.exe
 $ absent target/doc/simple_cargo_new/index.html
 > rustBuild
-$ exists (target/debug/simple-cargo-new.exe || target/debug/simple-cargo-new)
+$ exists target/debug/simple-cargo-new
 > rustTest
 > rustRun
 > rustRelease
@@ -15,7 +15,7 @@ $ exists target/doc/simple_cargo_new/index.html
 $ absent target/debug/simple-cargo-new.exe
 $ absent target/doc/simple_cargo_new/index.html
 > compile
-$ exists (target/debug/simple-cargo-new.exe || target/debug/simple-cargo-new)
+$ exists target/debug/simple-cargo-new
 > test
 > run
 > package
