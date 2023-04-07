@@ -23,7 +23,7 @@ jobs:
           cache: "sbt"
 
       - name: Compile
-        run: sbt clean compile
+        run: sbt clean compile test scripted
 
-      - name: Test
-        run: sbt test scripted
+#      - name: Test
+#        run: sbt test scripted
