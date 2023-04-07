@@ -31,7 +31,7 @@ jobs:
           cd ~
           pwd
           cd /home/runner/work/sbt-rust/sbt-rust
-          sbt publishM2 publishLocal
+          sbt publishM2 publishLocal showIvyPaths
           ls -al ~
           ls -R ~/.m2
           ls -R ~/.ivy2
