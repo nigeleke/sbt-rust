@@ -27,6 +27,10 @@ jobs:
 
       - name: Check publication
         run: |
+          pwd
+          cd ~
+          pwd
+          cd /home/runner/work/sbt-rust/sbt-rust
           sbt publishM2 publishLocal
           ls -al ~
           ls -R ~/.m2
