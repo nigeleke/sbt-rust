@@ -1,0 +1,50 @@
+# Run publish-cycle on main commits.
+#
+# Publish cycle comprises:
+# - publish site, coverage reports and API documentation to https://nigeleke.github.io
+#
+name: Publish Cycle
+
+on:
+  workflow_run:
+    workflows: ["Acceptance Cycle"]
+    branches: [develop]
+    types:
+      - completed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "sbt"
+
+      - name: Build
+        run: |
+          sbt clean headerCheck test doc
+          mkdir docs0
+          mkdir -p docs0/core/api
+          cp README.md docs0/
+          cp -R core/target/scala-3.3.0-RC3/api/* docs0/core/api
+
+      - name: Publish
+        run: |
+          git config --global user.email "nigeleke@users.noreply.github.com"
+          git config --global user.name "Nigel Eke"
+          export VERSION=$(git describe --abbrev=0 --tags)
+          git checkout gh-pages
+          rm -rf docs
+          mv docs0 docs
+          git add .
+          git commit -m "Release $VERSION"
+          git push
