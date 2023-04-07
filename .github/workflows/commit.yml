@@ -27,10 +27,7 @@ jobs:
 
       - name: Check publication
         run: |
-          echo "Hello world from inline script!"
-          echo "This is my script, and I can put anything here."
-          echo "I can even use bash commands like 'pwd':"
-          pwd
+          sbt publishM2 publishLocal
           ls -al ~
           ls -R ~/.m2
           ls -R ~/.ivy2
