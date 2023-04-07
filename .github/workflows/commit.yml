@@ -25,5 +25,11 @@ jobs:
       - name: Compile
         run: sbt clean compile
 
+      - name: Test cargo
+        run: cargo --version
+
+      - name: Test trunk
+        run: trunk --version
+
       - name: Test
         run: sbt test scripted

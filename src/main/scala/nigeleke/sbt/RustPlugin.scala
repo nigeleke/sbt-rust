@@ -74,7 +74,7 @@ object RustPlugin extends AutoPlugin {
         "cargo" +: cargoCommand.split(" ").toSeq
       case _         =>
         log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
-        Seq("ls", "-R")
+        Seq("echo", "'Command not completed'")
     }
     log.info(command.mkString(" "))
     command !
