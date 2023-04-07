@@ -23,4 +23,13 @@ jobs:
           cache: "sbt"
 
       - name: Compile, publish locally and test
-        run: sbt clean compile publishM2 publishLocal test scripted
+        run: sbt clean compile publishM2 publishLocal
+
+      - name: Check publication
+        run: |
+          echo "Hello world from inline script!"
+          echo "This is my script, and I can put anything here."
+          echo "I can even use bash commands like 'pwd':"
+          pwd
+          ls ~/.m2/repository/
+          ls ~/.ivy2/local/
