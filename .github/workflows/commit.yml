@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install trunk
+        run: cargo install --locked trunk
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -25,11 +28,15 @@ jobs:
       - name: Compile
         run: sbt clean compile
 
-      - name: Test cargo
-        run: cargo --version
+      - name: Test instals
+        run: |
+          cargo --version
+          trunk --install
 
-      - name: Test trunk
-        run: trunk --version
+      - name: Test cargo
+        run: |
+          cd src/sbt-test/sbt-rust/simple-cargo-new
+          cargo build
 
       - name: Test
         run: sbt test scripted
