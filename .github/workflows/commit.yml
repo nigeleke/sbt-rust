@@ -31,6 +31,6 @@ jobs:
           echo "This is my script, and I can put anything here."
           echo "I can even use bash commands like 'pwd':"
           pwd
-          ls -al .
           ls -al ~
-          ls -R ~/.ivy2/local
+          ls -R ~/.m2
+          ls -R ~/.ivy2
