@@ -31,7 +31,7 @@ jobs:
       - name: Test instals
         run: |
           cargo --version
-          trunk --install
+          trunk --version
 
       - name: Test cargo
         run: |
