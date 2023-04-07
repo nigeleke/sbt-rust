@@ -22,8 +22,5 @@ jobs:
           distribution: "temurin"
           cache: "sbt"
 
-      - name: Compile
-        run: sbt clean compile test scripted
-
-#      - name: Test
-#        run: sbt test scripted
+      - name: Compile, publish locally and test
+        run: sbt clean compile publishM2 publishLocal test scripted
