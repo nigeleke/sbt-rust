@@ -11,7 +11,6 @@ lazy val root = (project in file("."))
   .settings(
     name                          := "sbt-rust",
     headerLicense                 := bsd3License,
-    publish / skip                := true,
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.2.8"
