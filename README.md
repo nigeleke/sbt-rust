@@ -9,7 +9,7 @@
 An sbt plugin to integrate Rust development within Scala & SBT projects. This is useful for [Rust](https://www.rust-lang.org) projects
 built with [Cargo](https://doc.rust-lang.org/cargo/) or [Yew](https://yew.rs/) projects built with [Trunk](https://trunkrs.dev/).
 
-The plugin detects `cargo.toml`or `trunk.toml` files in the project's root directory. If found, it will run the equivalent
+The plugin detects `Cargo.toml`or `Trunk.toml` files in the project's root directory. If found, it will run the equivalent
 `cargo` or `trunk` command. If both `.toml` files then `trunk` is invoked by default. This default can be overridden by
 setting `wasmBuild / rust := false`, in which case `cargo` will be the default.
 

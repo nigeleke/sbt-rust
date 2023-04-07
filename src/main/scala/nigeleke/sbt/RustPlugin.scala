@@ -64,8 +64,8 @@ object RustPlugin extends AutoPlugin {
       baseDirectory: File,
       log: Logger
   ) = {
-    val cargoFound = (baseDirectory / "cargo.toml").exists()
-    val trunkFound = (baseDirectory / "trunk.toml").exists()
+    val cargoFound = (baseDirectory / "Cargo.toml").exists()
+    val trunkFound = (baseDirectory / "Trunk.toml").exists()
     val command    = (cargoFound, trunkFound && wasmBuild) match {
       case (_, true) =>
         val realTrunkCommand = if (trunkCommand.isEmpty) cargoCommand else trunkCommand
@@ -73,7 +73,7 @@ object RustPlugin extends AutoPlugin {
       case (true, _) =>
         "cargo" +: cargoCommand.split(" ").toSeq
       case _         =>
-        log.error("Cannot find `cargo.toml` or `trunk.toml` file.")
+        log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
         Seq("ls", "-R")
     }
     log.info(command.mkString(" "))
