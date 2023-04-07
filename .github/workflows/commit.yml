@@ -25,5 +25,8 @@ jobs:
       - name: Compile
         run: sbt clean compile
 
+      - name: Publish locally
+        run: sbt publishM2 publishLocal
+
       - name: Test
         run: sbt test scripted
