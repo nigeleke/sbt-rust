@@ -1,0 +1,63 @@
+*.class
+
+target
+project/project
+project/target
+.cache
+.classpath
+.project
+.settings
+bin
+
+# Added by cargo
+
+/target
+
+
+# intellij idea
+*.bsp
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+
+# mac
+.DS_Store
+
+# other?
+.history
+.scala_dependencies
+.cache
+.cache-main
+
+#general
+*.class
+
+.DS_Store
+node_modules
+/dist
+docs/
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+.bloop/
+.metals/
+metals.sbt
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

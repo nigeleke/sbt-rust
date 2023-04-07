@@ -1,0 +1,29 @@
+# Quick feedback for unit tests on non-main commits.
+#
+name: Commit Cycle
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "sbt"
+
+      - name: Compile
+        run: sbt clean compile
+
+      - name: Test
+        run: sbt test scripted
