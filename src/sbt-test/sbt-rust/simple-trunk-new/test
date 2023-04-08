@@ -1,30 +1,37 @@
 > rustClean
-$ absent target-trunk/debug/.cargo-lock
-$ absent target-trunk/release/.cargo-lock
-$ asbent dist/index.html
-$ absent target-trunk/doc/simple_cargo_new/index.html
-> rustCargoClean
+$ absent target-trunk/wasm32-unknown-unknown/debug/simple-trunk-new.wasm
+$ absent target-trunk/wasm32-unknown-unknown/release/simple-trunk-new.wasm
+$ absent dist/index.html
+$ absent target-trunk/doc/simple_trunk_new/index.html
 > rustBuild
-$ exists target-trunk/debug/.cargo-lock
+$ exists target-trunk/wasm32-unknown-unknown/debug/simple-trunk-new.wasm
 $ exists dist/index.html
 > rustTest
-> rustRun
+# Cannot run as trunk serve will wait...
+# > rustRun
 $ delete dist/index.html
 > rustRelease
-$ exists target-trunk/release/.cargo-lock
+$ exists target-trunk/wasm32-unknown-unknown/release/simple-trunk-new.wasm
 $ exists dist/index.html
 > rustPackage
 > rustConfig
 > rustDoc
-$ exists target-trunk/doc/simple_cargo_new/index.html
+$ exists target-trunk/doc/simple_trunk_new/index.html
 > clean
-$ absent target-trunk/debug/simple-cargo-new.d
-$ absent target-trunk/release/simple-cargo-new.d
-$ absent target-trunk/doc/simple_cargo_new/index.html
+$ exists target-trunk/wasm32-unknown-unknown/debug/simple-trunk-new.wasm
+$ exists target-trunk/wasm32-unknown-unknown/release/simple-trunk-new.wasm
+$ absent dist/index.html
+$ exists target-trunk/doc/simple_trunk_new/index.html
+> rustCargoClean
+$ absent target-trunk/wasm32-unknown-unknown/debug/simple-trunk-new.wasm
+$ absent target-trunk/wasm32-unknown-unknown/release/simple-trunk-new.wasm
+$ absent dist/index.html
+$ absent target-trunk/doc/simple_trunk_new/index.html
 > compile
-$ exists target-trunk/debug/simple-cargo-new.d
+$ exists target-trunk/wasm32-unknown-unknown/debug/simple-trunk-new.wasm
 > test
-> run
+# Cannot run as trunk serve will wait...
+# > run
 > package
 > doc
-$ exists target-trunk/doc/simple_cargo_new/index.html
+$ exists target-trunk/doc/simple_trunk_new/index.html

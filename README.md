@@ -50,7 +50,7 @@ This enables the Yew project to be developed while remaining within the Scala sb
 
 The plugin really only "makes sense" for multi-project environments. If the user only has a single `cargo` / `trunk`
 project they may as well use the tool directly. However a `build.sbt` could be created as a wrapper and this
-plugin used if desired, which is demonstrated in the sbt-test scripted tests.
+plugin used if desired. The expected folder structure for this is demonstrated in the sbt-test scripted tests.
 
 ## Usage
 
