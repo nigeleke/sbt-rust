@@ -30,16 +30,5 @@ jobs:
       - name: Compile
         run: sbt clean compile
 
-      - name: Test instals
-        run: |
-          cargo --version
-          trunk --version
-
-      - name: Test cargo
-        run: |
-          cd src/sbt-test/sbt-rust/simple-cargo-new
-          cargo build
-          ls -R
-
       - name: Test
         run: sbt test scripted
