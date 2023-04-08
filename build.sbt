@@ -6,6 +6,13 @@ val bsd3License = Some(HeaderLicense.BSD3Clause("2023", "Nigel Eke"))
 
 val scalatestVersion = "3.2.15"
 
+publishTo := Some(
+  Resolver.file(
+    "local-repo",
+    file(Path.userHome.absolutePath + "/.ivy2/local")
+  )
+)
+
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
