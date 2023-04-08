@@ -1,5 +1,15 @@
 # sbt-rust
 
+# *** NOTE ***
+
+This plugin started development in April-2023. This is currently being actively developed. Contributers are welcome.
+
+It will be tested in anger in another project, and enhanced as a result of findings during that time.
+
+This notice will be removed a) when I consider the plugin stable and useful.
+
+#
+
 [![BSD 3 Clause License](https://img.shields.io/github/license/nigeleke/sbt-rust?style=plastic)](https://github.com/nigeleke/sbt-rust/blob/master/LICENSE)
 [![Language](https://img.shields.io/badge/language-Scala-blue.svg?style=plastic)](https://www.scala-lang.org)
 [![Build](https://img.shields.io/github/actions/workflow/status/nigeleke/sbt-rust/acceptance.yml?style=plastic)](https://github.com/nigeleke/sbt-rust/actions/workflows/acceptance.yml)

@@ -65,8 +65,8 @@ object RustPlugin extends AutoPlugin {
       trunkCommand: String = ""
   )(
       wasmBuild: Boolean,
-      baseDirectory: File // ,
-//      log: Logger
+      baseDirectory: File,
+      log: Logger
   ) = {
     val cargoFound = (baseDirectory / "Cargo.toml").exists()
     val trunkFound = (baseDirectory / "Trunk.toml").exists()
@@ -77,10 +77,10 @@ object RustPlugin extends AutoPlugin {
       case (true, _) =>
         "cargo" +: cargoCommand.split(" ").toSeq
       case _         =>
-//        log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
+        log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
         Seq("echo", "'Command not completed'")
     }
-//    log.info(command.mkString(" "))
+    log.info(command.mkString(" "))
     command !
   }
 
@@ -98,52 +98,52 @@ object RustPlugin extends AutoPlugin {
     ) ++ Seq(
       rustClean      := execCommand("clean")(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustBuild      := execCommand(
         s"build ${(Rust / cargoDebugOptions).value}",
         s"build ${(Rust / trunkDebugOptions).value}"
       )(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustTest       := execCommand("test")(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustRun        := execCommand("run", "serve")(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustRelease    := execCommand(
         s"build --release ${(Rust / cargoReleaseOptions).value}",
         s"build --release ${(Rust / trunkReleaseOptions).value}"
       )(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustPackage    := execCommand("package")(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustConfig     := execCommand(
         "config get",
         "config show"
       )(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       rustDoc        := execCommand("doc")(
         (Rust / wasmBuild).value,
-        baseDirectory.value // ,
-//        streams.value.log
+        baseDirectory.value,
+        streams.value.log
       ),
       clean          := ((ThisBuild / clean) dependsOn rustClean).value,
       compile        := ((Compile / compile) dependsOn rustBuild).value,
