@@ -11,7 +11,7 @@ built with [Cargo](https://doc.rust-lang.org/cargo/) or [Yew](https://yew.rs/) p
 
 The plugin detects `Cargo.toml`or `Trunk.toml` files in the project's root directory. If found, it will run the equivalent
 `cargo` or `trunk` command. If both `.toml` files then `trunk` is invoked by default. This default can be overridden by
-setting `wasmBuild / rust := false`, in which case `cargo` will be the default.
+setting `Rust / wasmBuild := false`, in which case `cargo` will be the default.
 
 | Command     | Cargo                 | Trunk                 | sbt Command |
 |-------------|-----------------------|-----------------------|-------------|
@@ -71,8 +71,12 @@ lazy val ui = project
   .in(file("ui"))
   .enablePlugins(RustPlugin)
   .settings(
-    name        := "myproject-ui",
-    wasmBuild   := true,
+    name := "myproject-ui",
+    Rust / wasmBuild           := true, // optional, default
+    Rust / cargoDebugOptions   := "",   // optional, default
+    Rust / cargoReleaseOptions := "",   // optional, default
+    Rust / trunkDebugOptions   := "",   // optional, default
+    Rust / trunkReleaseOptions := "",   // optional, default
     ...
   )
 ```

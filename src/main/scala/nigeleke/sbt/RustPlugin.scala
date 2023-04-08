@@ -39,17 +39,21 @@ import scala.sys.process.*
 object RustPlugin extends AutoPlugin {
 
   object autoImport {
-    val rustWasmBuild = settingKey[Boolean](
+    val wasmBuild           = settingKey[Boolean](
       "Enable override for the plugin's trunk over cargo preference. Set false to use cargo. Default true. Only applies when both toml files exist."
     )
-    val rustClean     = taskKey[Unit]("Clean using cargo clean or trunk clean.")
-    val rustBuild     = taskKey[Unit]("Compile code using cargo build or trunk build.")
-    val rustTest      = taskKey[Unit]("Run tests using cargo test or trunk test.")
-    val rustRun       = taskKey[Unit]("Run program using cargo run or trunk serve.")
-    val rustRelease   = taskKey[Unit]("Compile code with --release using cargo build or trunk build.")
-    val rustPackage   = taskKey[Unit]("Package program using cargo package or trunk package.")
-    val rustConfig    = taskKey[Unit]("Show the current configuration.")
-    val rustDoc       = taskKey[Unit]("Generate documentation using cargo doc or trunk doc.")
+    val cargoDebugOptions   = settingKey[String]("Additional options for 'cargo build'")
+    val cargoReleaseOptions = settingKey[String]("Additional options for 'cargo build --release'")
+    val trunkDebugOptions   = settingKey[String]("Additional options for 'trunk build'")
+    val trunkReleaseOptions = settingKey[String]("Additional options for 'trunk build --release'")
+    val rustClean           = taskKey[Unit]("Clean using cargo clean or trunk clean.")
+    val rustBuild           = taskKey[Unit]("Compile code using cargo build or trunk build.")
+    val rustTest            = taskKey[Unit]("Run tests using cargo test or trunk test.")
+    val rustRun             = taskKey[Unit]("Run program using cargo run or trunk serve.")
+    val rustRelease         = taskKey[Unit]("Compile code with --release using cargo build or trunk build.")
+    val rustPackage         = taskKey[Unit]("Package program using cargo package or trunk package.")
+    val rustConfig          = taskKey[Unit]("Show the current configuration.")
+    val rustDoc             = taskKey[Unit]("Generate documentation using cargo doc or trunk doc.")
   }
 
   import autoImport._
@@ -61,8 +65,8 @@ object RustPlugin extends AutoPlugin {
       trunkCommand: String = ""
   )(
       wasmBuild: Boolean,
-      baseDirectory: File,
-      log: Logger
+      baseDirectory: File // ,
+//      log: Logger
   ) = {
     val cargoFound = (baseDirectory / "Cargo.toml").exists()
     val trunkFound = (baseDirectory / "Trunk.toml").exists()
@@ -73,61 +77,81 @@ object RustPlugin extends AutoPlugin {
       case (true, _) =>
         "cargo" +: cargoCommand.split(" ").toSeq
       case _         =>
-        log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
+//        log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
         Seq("echo", "'Command not completed'")
     }
-    log.info(command.mkString(" "))
+//    log.info(command.mkString(" "))
     command !
   }
 
-  override lazy val projectSettings = Seq(
-    rustWasmBuild  := true,
-    rustClean      := execCommand("clean")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustBuild      := execCommand("build")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustTest       := execCommand("test")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustRun        := execCommand("run", "serve")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustRelease    := execCommand("build --release")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustPackage    := execCommand("package")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustConfig     := execCommand("config get", "config show")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    rustDoc        := execCommand("doc")(
-      rustWasmBuild.value,
-      baseDirectory.value,
-      streams.value.log
-    ),
-    clean          := ((ThisProject / clean) dependsOn rustClean).value,
-    compile        := ((Compile / compile) dependsOn rustBuild).value,
-    test           := ((Test / test) dependsOn rustTest).value,
-    run            := ((ThisProject / run) dependsOn rustRun),
-    Keys.`package` := ((Compile / Keys.`package`) dependsOn rustPackage).value,
-    doc            := ((Compile / doc) dependsOn rustDoc).value
-  )
+  lazy val Rust = config("rust")
+
+  override lazy val projectSettings = {
+    inConfig(Rust)(
+      Seq(
+        wasmBuild           := true,
+        cargoDebugOptions   := "",
+        cargoReleaseOptions := "",
+        trunkDebugOptions   := "",
+        trunkReleaseOptions := ""
+      )
+    ) ++ Seq(
+      rustClean      := execCommand("clean")(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustBuild      := execCommand(
+        s"build ${(Rust / cargoDebugOptions).value}",
+        s"build ${(Rust / trunkDebugOptions).value}"
+      )(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustTest       := execCommand("test")(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustRun        := execCommand("run", "serve")(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustRelease    := execCommand(
+        s"build --release ${(Rust / cargoReleaseOptions).value}",
+        s"build --release ${(Rust / trunkReleaseOptions).value}"
+      )(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustPackage    := execCommand("package")(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustConfig     := execCommand(
+        "config get",
+        "config show"
+      )(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      rustDoc        := execCommand("doc")(
+        (Rust / wasmBuild).value,
+        baseDirectory.value // ,
+//        streams.value.log
+      ),
+      clean          := ((ThisBuild / clean) dependsOn rustClean).value,
+      compile        := ((Compile / compile) dependsOn rustBuild).value,
+      test           := ((Test / test) dependsOn rustTest).value,
+      run            := ((ThisBuild / run) dependsOn rustRun),
+      Keys.`package` := ((Compile / Keys.`package`) dependsOn rustPackage).value,
+      doc            := ((Compile / doc) dependsOn rustDoc).value
+    )
+  }
 
 }

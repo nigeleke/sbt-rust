@@ -1,23 +1,25 @@
 > rustClean
-$ absent target/debug/simple-cargo-new
-$ absent target/debug/simple-cargo-new.exe
-$ absent target/doc/simple_cargo_new/index.html
+$ absent target-cargo/debug/simple-cargo-new.d
+$ absent target-cargo/release/simple-cargo-new.d
+$ absent target-cargo/doc/simple_cargo_new/index.html
 > rustBuild
-$ exists target/debug/simple-cargo-new
+$ exists target-cargo/debug/simple-cargo-new.d
 > rustTest
 > rustRun
 > rustRelease
+$ exists target-cargo/release/simple-cargo-new.d
 > rustPackage
 > rustConfig
 > rustDoc
-$ exists target/doc/simple_cargo_new/index.html
+$ exists target-cargo/doc/simple_cargo_new/index.html
 > clean
-$ absent target/debug/simple-cargo-new.exe
-$ absent target/doc/simple_cargo_new/index.html
+$ absent target-cargo/debug/simple-cargo-new.d
+$ absent target-cargo/release/simple-cargo-new.d
+$ absent target-cargo/doc/simple_cargo_new/index.html
 > compile
-$ exists target/debug/simple-cargo-new
+$ exists target-cargo/debug/simple-cargo-new.d
 > test
 > run
 > package
 > doc
-$ exists target/doc/simple_cargo_new/index.html
+$ exists target-cargo/doc/simple_cargo_new/index.html
