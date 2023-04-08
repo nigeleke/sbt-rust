@@ -1,0 +1,30 @@
+> rustClean
+$ absent target-trunk/debug/.cargo-lock
+$ absent target-trunk/release/.cargo-lock
+$ asbent dist/index.html
+$ absent target-trunk/doc/simple_cargo_new/index.html
+> rustCargoClean
+> rustBuild
+$ exists target-trunk/debug/.cargo-lock
+$ exists dist/index.html
+> rustTest
+> rustRun
+$ delete dist/index.html
+> rustRelease
+$ exists target-trunk/release/.cargo-lock
+$ exists dist/index.html
+> rustPackage
+> rustConfig
+> rustDoc
+$ exists target-trunk/doc/simple_cargo_new/index.html
+> clean
+$ absent target-trunk/debug/simple-cargo-new.d
+$ absent target-trunk/release/simple-cargo-new.d
+$ absent target-trunk/doc/simple_cargo_new/index.html
+> compile
+$ exists target-trunk/debug/simple-cargo-new.d
+> test
+> run
+> package
+> doc
+$ exists target-trunk/doc/simple_cargo_new/index.html

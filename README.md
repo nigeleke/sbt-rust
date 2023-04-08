@@ -1,14 +1,15 @@
 # sbt-rust
 
-# *** NOTE ***
+# *** note ***
 
-This plugin started development in April-2023. This is currently being actively developed. Contributers are welcome.
+This plugin started development in April-2023. This is currently being actively developed. Contributions are welcome.
 
 It will be tested in anger in another project, and enhanced as a result of findings during that time.
 
-This notice will be removed a) when I consider the plugin stable and useful.
+This notice will be removed when I consider the plugin stable and useful. As you read this, you can try the plugin at
+your own peril.
 
-#
+# *** /note ***
 
 [![BSD 3 Clause License](https://img.shields.io/github/license/nigeleke/sbt-rust?style=plastic)](https://github.com/nigeleke/sbt-rust/blob/master/LICENSE)
 [![Language](https://img.shields.io/badge/language-Scala-blue.svg?style=plastic)](https://www.scala-lang.org)
@@ -19,31 +20,37 @@ This notice will be removed a) when I consider the plugin stable and useful.
 An sbt plugin to integrate Rust development within Scala & SBT projects. This is useful for [Rust](https://www.rust-lang.org) projects
 built with [Cargo](https://doc.rust-lang.org/cargo/) or [Yew](https://yew.rs/) projects built with [Trunk](https://trunkrs.dev/).
 
-The plugin detects `Cargo.toml`or `Trunk.toml` files in the project's root directory. If found, it will run the equivalent
-`cargo` or `trunk` command. If both `.toml` files then `trunk` is invoked by default. This default can be overridden by
-setting `Rust / wasmBuild := false`, in which case `cargo` will be the default.
+The plugin attempts to use the `trunk` package manager by default. This default can be overridden by
+setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then be used.
 
-| Command     | Cargo                 | Trunk                 | sbt Command |
-|-------------|-----------------------|-----------------------|-------------|
-| rustClean   | cargo clean           | trunk clean           | clean       |
-| rustBuild   | cargo build           | trunk build           | compile     |
-| rustTest    | cargo test            | trunk test            | test        |
-| rustRun     | cargo run             | trunk serve           | run         |
-| rustRelease | cargo build --release | trunk build --release |             |
-| rustPackage | cargo package         | trunk package         | package     |
-| rustConfig  | cargo config get [1]  | trunk config show     |             |
-| rustDoc     | cargo doc             | trunk doc             | doc         |
+| Command            | CargoPackageManager       | TrunkPackageManager       | sbt Command |
+|--------------------|---------------------------|---------------------------|-------------|
+| rustClean          | cargo clean               | trunk clean               | clean       |
+| rustCargoClean [1] | cargo clean               | cargo clean               |             |
+| rustBuild          | cargo [2] build           | trunk [3] build           | compile     |
+| rustTest           | cargo test                | cargo test                | test        |
+| rustRun            | cargo run                 | trunk serve [4]           | run         |
+| rustRelease        | cargo [5] build --release | trunk [6] build --release |             |
+| rustPackage        | cargo package             | cargo package             | package     |
+| rustConfig         | cargo config get [7]      | trunk config show         |             |
+| rustDoc            | cargo doc                 | cargo doc                 | doc         |
 
-[1] As at April 2023 requires nightly build.
+    [1] Forces cargo clean when using trunk package manager (trunk clean delete dist folder, but not target folder contents)
+    [2] Rust / cargoDebugOptions
+    [3] Rust / trunkDebugOptions
+    [4] Waits for server to exit
+    [5] Rust / cargoReleaseOptions
+    [6] Rust / trunkReleaseOptions
+    [7] Requires nightly build (as stands in April 2023)
 
 ## Motivation
 
-An multi-project `build.sbt` file, where the frontend project is developed using [Yew](https://yew.rs/).
-This enables the yew project to be developed while remaining within the Scala sbt infrastructure.
+The plugin is intended for use in a multi-project `build.sbt` file, where the frontend project is developed using [Yew](https://yew.rs/).
+This enables the Yew project to be developed while remaining within the Scala sbt infrastructure.
 
-The plugin only "makes sense" for multi-project environments. If the user only has a single `cargo` / `trunk`
+The plugin really only "makes sense" for multi-project environments. If the user only has a single `cargo` / `trunk`
 project they may as well use the tool directly. However a `build.sbt` could be created as a wrapper and this
-plugin used if desired.
+plugin used if desired, which is demonstrated in the sbt-test scripted tests.
 
 ## Usage
 
@@ -82,7 +89,7 @@ lazy val ui = project
   .enablePlugins(RustPlugin)
   .settings(
     name := "myproject-ui",
-    Rust / wasmBuild           := true, // optional, default
+    Rust / packageManager      := TrunkPackageManager, // optional, default. Allowed CargoPackageManager or TrunkPackageManager
     Rust / cargoDebugOptions   := "",   // optional, default
     Rust / cargoReleaseOptions := "",   // optional, default
     Rust / trunkDebugOptions   := "",   // optional, default
@@ -93,7 +100,8 @@ lazy val ui = project
 
 The folder layout and files within the `ui` folder are expected to match the `cargo new ui` or `trunk new ui`
 layout. As such, the `cargo` or `trunk` tooling can continue to be used independently. (Consideration was given
-to forcing the standard `src/main/rust` folder structure but this was rejected as being too opinionated)
+to forcing the standard using `src/main/rust` folder structure but this was rejected as being too opinionated, and
+not inline with the defaults of the underlying `cargo` and `trunk` tooling)
 
 ## Plugin Development
 

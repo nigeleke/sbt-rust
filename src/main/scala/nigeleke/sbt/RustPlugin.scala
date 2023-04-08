@@ -38,15 +38,18 @@ import scala.sys.process.*
 
 object RustPlugin extends AutoPlugin {
 
+  sealed trait PackageManager
+  case object CargoPackageManager extends PackageManager
+  case object TrunkPackageManager extends PackageManager
+
   object autoImport {
-    val wasmBuild           = settingKey[Boolean](
-      "Enable override for the plugin's trunk over cargo preference. Set false to use cargo. Default true. Only applies when both toml files exist."
-    )
+    val tooling             = settingKey[PackageManager]("Cargo or Trunk. Default TrunkPackageManager")
     val cargoDebugOptions   = settingKey[String]("Additional options for 'cargo build'")
     val cargoReleaseOptions = settingKey[String]("Additional options for 'cargo build --release'")
     val trunkDebugOptions   = settingKey[String]("Additional options for 'trunk build'")
     val trunkReleaseOptions = settingKey[String]("Additional options for 'trunk build --release'")
     val rustClean           = taskKey[Unit]("Clean using cargo clean or trunk clean.")
+    val rustCargoClean      = taskKey[Unit]("Force cargo clean, when trunk clean is not enough.")
     val rustBuild           = taskKey[Unit]("Compile code using cargo build or trunk build.")
     val rustTest            = taskKey[Unit]("Run tests using cargo test or trunk test.")
     val rustRun             = taskKey[Unit]("Run program using cargo run or trunk serve.")
@@ -64,23 +67,12 @@ object RustPlugin extends AutoPlugin {
       cargoCommand: String,
       trunkCommand: String = ""
   )(
-      wasmBuild: Boolean,
-      baseDirectory: File,
-      log: Logger
+      tooling: PackageManager
   ) = {
-    val cargoFound = (baseDirectory / "Cargo.toml").exists()
-    val trunkFound = (baseDirectory / "Trunk.toml").exists()
-    val command    = (cargoFound, trunkFound && wasmBuild) match {
-      case (_, true) =>
-        val realTrunkCommand = if (trunkCommand.isEmpty) cargoCommand else trunkCommand
-        "trunk" +: realTrunkCommand.split(" ").toSeq
-      case (true, _) =>
-        "cargo" +: cargoCommand.split(" ").toSeq
-      case _         =>
-        log.error("Cannot find `Cargo.toml` or `Trunk.toml` file.")
-        Seq("echo", "'Command not completed'")
+    val command = tooling match {
+      case CargoPackageManager => cargoCommand
+      case TrunkPackageManager => if (trunkCommand.isBlank) cargoCommand else trunkCommand
     }
-    log.info(command.mkString(" "))
     command !
   }
 
@@ -89,62 +81,28 @@ object RustPlugin extends AutoPlugin {
   override lazy val projectSettings = {
     inConfig(Rust)(
       Seq(
-        wasmBuild           := true,
+        tooling             := TrunkPackageManager,
         cargoDebugOptions   := "",
         cargoReleaseOptions := "",
         trunkDebugOptions   := "",
         trunkReleaseOptions := ""
       )
     ) ++ Seq(
-      rustClean      := execCommand("clean")(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
+      rustClean      := execCommand("cargo clean", "trunk clean")((Rust / tooling).value),
+      rustCargoClean := execCommand("cargo clean", "cargo clean")((Rust / tooling).value),
       rustBuild      := execCommand(
-        s"build ${(Rust / cargoDebugOptions).value}",
-        s"build ${(Rust / trunkDebugOptions).value}"
-      )(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
-      rustTest       := execCommand("test")(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
-      rustRun        := execCommand("run", "serve")(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
+        s"cargo ${(Rust / cargoDebugOptions).value} build",
+        s"trunk ${(Rust / trunkDebugOptions).value} build"
+      )((Rust / tooling).value),
+      rustTest       := execCommand("cargo test", "cargo test")((Rust / tooling).value),
+      rustRun        := execCommand("cargo run", "trunk serve")((Rust / tooling).value),
       rustRelease    := execCommand(
-        s"build --release ${(Rust / cargoReleaseOptions).value}",
-        s"build --release ${(Rust / trunkReleaseOptions).value}"
-      )(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
-      rustPackage    := execCommand("package")(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
-      rustConfig     := execCommand(
-        "config get",
-        "config show"
-      )(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
-      rustDoc        := execCommand("doc")(
-        (Rust / wasmBuild).value,
-        baseDirectory.value,
-        streams.value.log
-      ),
+        s"cargo ${(Rust / cargoReleaseOptions).value} build --release",
+        s"trunk ${(Rust / trunkReleaseOptions).value} build --release"
+      )((Rust / tooling).value),
+      rustPackage    := execCommand("cargo package")((Rust / tooling).value),
+      rustConfig     := execCommand("cargo config get", "trunk config show")((Rust / tooling).value),
+      rustDoc        := execCommand("cargo doc")((Rust / tooling).value),
       clean          := ((ThisBuild / clean) dependsOn rustClean).value,
       compile        := ((Compile / compile) dependsOn rustBuild).value,
       test           := ((Test / test) dependsOn rustTest).value,

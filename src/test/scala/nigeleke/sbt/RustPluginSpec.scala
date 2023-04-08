@@ -11,6 +11,13 @@ class RustPluginSpec extends AnyWordSpec with Matchers {
 
   "RustPlugin" should {
 
+    "expect nine rustSomething sbt commands" in {
+      val rustCommands =
+        projectSettings.map(_.toString).filter(_.contains("This / This / This,rust"))
+      println(rustCommands.mkString("\n"))
+      rustCommands.size should be(9)
+    }
+
     /* A weak set of tests. Better (but still somewhat weak) tests are evaluated in `scripted`. */
     "allow the following sbt commands" when {
 
@@ -21,6 +28,7 @@ class RustPluginSpec extends AnyWordSpec with Matchers {
         }
 
       "rustClean" in { assertExists("rustClean") }
+      "rustCargoClean" in { assertExists("rustCargoClean") }
       "rustBuild" in { assertExists("rustBuild") }
       "rustTest" in { assertExists("rustTest") }
       "rustRun" in { assertExists("rustRun") }
