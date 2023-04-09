@@ -20,6 +20,12 @@ your own peril.
 An sbt plugin to integrate Rust development within Scala & SBT projects. This is useful for [Rust](https://www.rust-lang.org) projects
 built with [Cargo](https://doc.rust-lang.org/cargo/) or [Yew](https://yew.rs/) projects built with [Trunk](https://trunkrs.dev/).
 
+## Documentation
+
+* [Site](https://nigeleke.github.io/sbt-rust)
+* [GitHub](https://github.com/nigeleke/sbt-rust)
+* [API - Core](https://nigeleke.github.io/sbt-rust/core/api/index.html)
+
 The plugin attempts to use the `trunk` package manager by default. This default can be overridden by
 setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then be used.
 

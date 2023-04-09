@@ -33,9 +33,9 @@ jobs:
         run: |
           sbt clean headerCheck test doc
           mkdir docs0
-          mkdir -p docs0/core/api
+          mkdir -p docs0/api
           cp README.md docs0/
-          cp -R core/target/scala-3.3.0-RC3/api/* docs0/core/api
+          cp -R core/target/scala-2.12/sbt-1.0/api/* docs0/api
 
       - name: Publish
         run: |
