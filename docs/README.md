@@ -66,6 +66,11 @@ plugin used if desired. The expected folder structure for this is demonstrated i
 [Trunk](https://trunkrs.dev/) must be installed independently (as required) and their binaries accessible on
 the current PATH.
 
+```bash
+git clone https://github.com/nigeleke/sbt-rust.git
+sbt publishLocal
+```
+
 ### plugins.sbt
 
 `addSbtPlugin("nigeleke" % "sbt-rust" % "<version>")`
