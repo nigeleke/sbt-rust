@@ -1,0 +1,27 @@
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(nigeleke.sbt.RustPluginSpec, org.scalatest.tools.Framework$$anon$1@5ceeb681, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRustPluginSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mRustPlugin[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should expect nine rustSomething sbt commands[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  should allow the following sbt commands[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustClean[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustCargoClean[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustBuild[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustTest[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustRun[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustRelease[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustPackage[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustConfig[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when rustDoc[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when clean[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when compile[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when test[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when run[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when package[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m  - when doc[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mRun completed in 862 milliseconds.[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTotal number of tests run: 16[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mSuites: completed 1, aborted 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTests: succeeded 16, failed 0, canceled 0, ignored 0, pending 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAll tests passed.[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mPassed tests:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	nigeleke.sbt.RustPluginSpec[0m
