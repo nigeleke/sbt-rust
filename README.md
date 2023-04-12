@@ -2,12 +2,21 @@
 
 # *** note ***
 
+## Update 12-Apr-2023
+
 This plugin started development in April-2023. This is currently being actively developed. Contributions are welcome.
 
-It will be tested in anger in another project, and enhanced as a result of findings during that time.
+Quick tests one another project (12-April-2023) show that the rust commands are invoked.
 
-This notice will be removed when I consider the plugin stable and useful. As you read this, you can try the plugin at
-your own peril.
+Known issue:
+
+  * rustRun with trunk tooling won't stop the server.
+  * pure sbt commands not yet implemented.
+
+Further testing will continue and enhancements made.
+
+If you're happy to try this plugin please do. I'm happy to get feedback. Still expecting a fair amount of work, so 
+the warning still exists to try the plugin at your own peril.
 
 # *** /note ***
 
@@ -33,21 +42,20 @@ setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then
 |--------------------|---------------------------|---------------------------|-------------|
 | rustClean          | cargo clean               | trunk clean               | clean       |
 | rustCargoClean [1] | cargo clean               | cargo clean               |             |
-| rustBuild          | cargo [2] build           | trunk [3] build           | compile     |
+| rustBuild          | cargo [2] build           | trunk [2] build           | compile     |
 | rustTest           | cargo test                | cargo test                | test        |
-| rustRun            | cargo run                 | trunk serve [4]           | run         |
-| rustRelease        | cargo [5] build --release | trunk [6] build --release |             |
+| rustRun            | cargo run [3]             | trunk serve [3, 4]        | run         |
+| rustRelease        | cargo [5] build --release | trunk [5] build --release |             |
 | rustPackage        | cargo package             | cargo package             | package     |
-| rustConfig         | cargo config get [7]      | trunk config show         |             |
+| rustConfig         | cargo config get [6]      | trunk config show         |             |
 | rustDoc            | cargo doc                 | cargo doc                 | doc         |
 
     [1] Forces cargo clean when using trunk package manager (trunk clean delete dist folder, but not target folder contents)
-    [2] Rust / cargoDebugOptions
-    [3] Rust / trunkDebugOptions
-    [4] Waits for server to exit
-    [5] Rust / cargoReleaseOptions
-    [6] Rust / trunkReleaseOptions
-    [7] Requires nightly build (as stands in April 2023)
+    [2] Rust / debugOptions
+    [3] Rust / runOptions
+    [4] Waits for server to exit.
+    [5] Rust / releaseOptions
+    [6] Requires nightly build (as stands in April 2023)
 
 ## Motivation
 
@@ -100,7 +108,7 @@ lazy val ui = project
   .enablePlugins(RustPlugin)
   .settings(
     name := "myproject-ui",
-    Rust / packageManager      := TrunkPackageManager, // optional, default. Allowed CargoPackageManager or TrunkPackageManager
+    Rust / tooling             := TrunkPackageManager, // optional, default. Allowed CargoPackageManager or TrunkPackageManager
     Rust / cargoDebugOptions   := "",   // optional, default
     Rust / cargoReleaseOptions := "",   // optional, default
     Rust / trunkDebugOptions   := "",   // optional, default

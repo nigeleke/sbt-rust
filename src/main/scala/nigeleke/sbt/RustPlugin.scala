@@ -43,73 +43,107 @@ object RustPlugin extends AutoPlugin {
   case object TrunkPackageManager extends PackageManager
 
   object autoImport {
-    val tooling             = settingKey[PackageManager]("Cargo or Trunk. Default TrunkPackageManager")
-    val cargoDebugOptions   = settingKey[String]("Additional options for 'cargo build'")
-    val cargoReleaseOptions = settingKey[String]("Additional options for 'cargo build --release'")
-    val trunkDebugOptions   = settingKey[String]("Additional options for 'trunk build'")
-    val trunkReleaseOptions = settingKey[String]("Additional options for 'trunk build --release'")
-    val rustClean           = taskKey[Unit]("Clean using cargo clean or trunk clean.")
-    val rustCargoClean      = taskKey[Unit]("Force cargo clean, when trunk clean is not enough.")
-    val rustBuild           = taskKey[Unit]("Compile code using cargo build or trunk build.")
-    val rustTest            = taskKey[Unit]("Run tests using cargo test or trunk test.")
-    val rustRun             = taskKey[Unit]("Run program using cargo run or trunk serve.")
-    val rustRelease         = taskKey[Unit]("Compile code with --release using cargo build or trunk build.")
-    val rustPackage         = taskKey[Unit]("Package program using cargo package or trunk package.")
-    val rustConfig          = taskKey[Unit]("Show the current configuration.")
-    val rustDoc             = taskKey[Unit]("Generate documentation using cargo doc or trunk doc.")
+    val Rust           = config("rust")
+    val tooling        = settingKey[PackageManager]("Cargo or Trunk. Default TrunkPackageManager")
+    val debugOptions   = settingKey[String]("Options for 'cargo' or 'trunk build'")
+    val releaseOptions = settingKey[String]("Options for 'cargo' or 'trunk build --release'")
+    val runOptions     = settingKey[String]("Options to pass to 'cargo run' or 'trunk serve'")
+    val rustClean      = taskKey[Unit]("Clean using cargo clean or trunk clean.")
+    val rustCargoClean = taskKey[Unit]("Force cargo clean, when trunk clean is not enough.")
+    val rustBuild      = taskKey[Unit]("Compile code using cargo build or trunk build.")
+    val rustTest       = taskKey[Unit]("Run tests using cargo test or trunk test.")
+    val rustRun        = taskKey[Unit]("Run program using cargo run or trunk serve.")
+    val rustRelease    = taskKey[Unit]("Compile code with --release using cargo build or trunk build.")
+    val rustPackage    = taskKey[Unit]("Package program using cargo package or trunk package.")
+    val rustConfig     = taskKey[Unit]("Show the current configuration.")
+    val rustDoc        = taskKey[Unit]("Generate documentation using cargo doc or trunk doc.")
+//    val clean               = taskKey[Unit]("Generic clean command")
+  }
+
+  object privateImport {
+    val useCargo = settingKey[Boolean]("Factor the tooling package manager to a simple test")
   }
 
   import autoImport._
+  import privateImport._
 
-  override def trigger = allRequirements
+  override def requires = empty
+  override def trigger  = noTrigger
 
-  private def execCommand(
-      cargoCommand: String,
-      trunkCommand: String = ""
-  )(
-      tooling: PackageManager
-  ) = {
-    val command = tooling match {
-      case CargoPackageManager => cargoCommand
-      case TrunkPackageManager => if (trunkCommand.isBlank) cargoCommand else trunkCommand
-    }
-    command !
+  private def execCommand(command: String, workingDirectory: File) = Def.task {
+    val application = command.takeWhile(_ != ' ')
+    val arguments   = command.drop(application.length).trim
+    val process     = Process(Seq(application, arguments), workingDirectory)
+    val exitCode    = (process !)
+    if (exitCode != 0)
+      throw new RuntimeException(s"Command '$command' failed with exit code $exitCode")
   }
-
-  lazy val Rust = config("rust")
 
   override lazy val projectSettings = {
     inConfig(Rust)(
       Seq(
-        tooling             := TrunkPackageManager,
-        cargoDebugOptions   := "",
-        cargoReleaseOptions := "",
-        trunkDebugOptions   := "",
-        trunkReleaseOptions := ""
+        tooling        := TrunkPackageManager,
+        debugOptions   := "",
+        releaseOptions := "",
+        runOptions     := ""
       )
     ) ++ Seq(
-      rustClean      := execCommand("cargo clean", "trunk clean")((Rust / tooling).value),
-      rustCargoClean := execCommand("cargo clean", "cargo clean")((Rust / tooling).value),
-      rustBuild      := execCommand(
-        s"cargo ${(Rust / cargoDebugOptions).value} build",
-        s"trunk ${(Rust / trunkDebugOptions).value} build"
-      )((Rust / tooling).value),
-      rustTest       := execCommand("cargo test", "cargo test")((Rust / tooling).value),
-      rustRun        := execCommand("cargo run", "trunk serve")((Rust / tooling).value),
-      rustRelease    := execCommand(
-        s"cargo ${(Rust / cargoReleaseOptions).value} build --release",
-        s"trunk ${(Rust / trunkReleaseOptions).value} build --release"
-      )((Rust / tooling).value),
-      rustPackage    := execCommand("cargo package")((Rust / tooling).value),
-      rustConfig     := execCommand("cargo config get", "trunk config show")((Rust / tooling).value),
-      rustDoc        := execCommand("cargo doc")((Rust / tooling).value),
-      clean          := ((ThisBuild / clean) dependsOn rustClean).value,
-      compile        := ((Compile / compile) dependsOn rustBuild).value,
-      test           := ((Test / test) dependsOn rustTest).value,
-      run            := ((ThisBuild / run) dependsOn rustRun),
-      Keys.`package` := ((Compile / Keys.`package`) dependsOn rustPackage).value,
-      doc            := ((Compile / doc) dependsOn rustDoc).value
+      useCargo := (Rust / tooling).value == CargoPackageManager
+    ) ++ Seq(
+      rustClean      := Def.taskDyn {
+        val useCargoV = useCargo.value
+        val command   = if (useCargoV) "cargo clean" else "trunk clean"
+        execCommand(command, thisProject.value.base)
+      }.value,
+      rustCargoClean := Def.taskDyn {
+        execCommand("cargo clean", thisProject.value.base)
+      }.value,
+      rustBuild      := Def.taskDyn {
+        val useCargoV    = useCargo.value
+        val cargoCommand = s"cargo ${(Rust / debugOptions).value} build"
+        val trunkCommand = s"trunk ${(Rust / debugOptions).value} build"
+        val command      = if (useCargoV) cargoCommand else trunkCommand
+        execCommand(command, thisProject.value.base)
+      }.value,
+      rustTest       := Def.taskDyn {
+        execCommand("cargo test", thisProject.value.base)
+      }.value,
+      rustRun        := Def.taskDyn {
+        val useCargoV    = useCargo.value
+        val cargoCommand = s"cargo run ${(Rust / runOptions).value}"
+        val trunkCommand = s"trunk serve ${(Rust / runOptions).value}"
+        val command      = if (useCargoV) cargoCommand else trunkCommand
+        execCommand(command, thisProject.value.base)
+      }.value,
+      rustRelease    := Def.taskDyn {
+        val useCargoV    = useCargo.value
+        val cargoCommand = s"cargo ${(Rust / releaseOptions).value} build --release"
+        val trunkCommand = s"trunk ${(Rust / releaseOptions).value} build --release"
+        val command      = if (useCargoV) cargoCommand else trunkCommand
+        execCommand(command, thisProject.value.base)
+      }.value,
+      rustPackage    := Def.taskDyn {
+        execCommand("cargo package", thisProject.value.base)
+      }.value,
+      rustConfig     := Def.taskDyn {
+        val useCargoV    = useCargo.value
+        val cargoCommand = "cargo config get"
+        val trunkCommand = "trunk config show"
+        val command      = if (useCargoV) cargoCommand else trunkCommand
+        execCommand(command, thisProject.value.base)
+      }.value,
+      rustDoc        := Def.taskDyn {
+        execCommand("cargo doc", thisProject.value.base)
+      }.value
+////      clean          := println(s"${thisProject.value}\n\n"),
+////      // ((ThisBuild / clean) dependsOn rustClean).value,
+////      compile        := ((Compile / compile) dependsOn rustBuild).value,
+////      test           := ((Test / test) dependsOn rustTest).value,
+////      run            := ((ThisProject / run) dependsOn rustRun),
+////      Keys.`package` := ((Compile / Keys.`package`) dependsOn rustPackage).value,
+////      doc            := ((Compile / doc) dependsOn rustDoc).value
     )
+
   }
 
 }
