@@ -6,7 +6,7 @@
 
 This plugin started development in April-2023. This is currently being actively developed. Contributions are welcome.
 
-Quick tests one another project (12-April-2023) show that the rust commands are invoked.
+Quick tests on another project (12-April-2023) show that the rust commands are invoked.
 
 Known issue:
 
@@ -33,7 +33,7 @@ built with [Cargo](https://doc.rust-lang.org/cargo/) or [Yew](https://yew.rs/) p
 
 * [Site](https://nigeleke.github.io/sbt-rust)
 * [GitHub](https://github.com/nigeleke/sbt-rust)
-* [API - Core](https://nigeleke.github.io/sbt-rust/core/api/index.html)
+* [API](https://nigeleke.github.io/sbt-rust/api/index.html)
 
 The plugin attempts to use the `trunk` package manager by default. This default can be overridden by
 setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then be used.
