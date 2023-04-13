@@ -1,5 +1,6 @@
 {
   val pluginVersion = System.getProperty("plugin.version")
+  println(s"pluginVersion1: $pluginVersion")
   if (pluginVersion == null) {
     throw new RuntimeException(
       """|The system property 'plugin.version' is not defined.

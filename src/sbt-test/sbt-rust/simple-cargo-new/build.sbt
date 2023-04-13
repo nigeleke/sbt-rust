@@ -4,7 +4,8 @@ scalaVersion := "2.12.1"
 import nigeleke.sbt.RustPlugin.*
 
 lazy val root = (project in file("."))
+  .enablePlugins(RustPlugin)
   .settings(
-    name           := "",
+    name           := "test",
     Rust / tooling := CargoPackageManager
   )

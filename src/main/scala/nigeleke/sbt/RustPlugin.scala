@@ -43,8 +43,8 @@ object RustPlugin extends AutoPlugin {
   case object TrunkPackageManager extends PackageManager
 
   object autoImport {
-    val Rust           = config("rust")
     val tooling        = settingKey[PackageManager]("Cargo or Trunk. Default TrunkPackageManager")
+      .withRank(KeyRanks.Invisible)
     val debugOptions   = settingKey[String]("Options for 'cargo' or 'trunk build'")
     val releaseOptions = settingKey[String]("Options for 'cargo' or 'trunk build --release'")
     val runOptions     = settingKey[String]("Options to pass to 'cargo run' or 'trunk serve'")
@@ -60,24 +60,22 @@ object RustPlugin extends AutoPlugin {
 //    val clean               = taskKey[Unit]("Generic clean command")
   }
 
-  object privateImport {
-    val useCargo = settingKey[Boolean]("Factor the tooling package manager to a simple test")
-  }
-
   import autoImport._
-  import privateImport._
 
   override def requires = empty
   override def trigger  = noTrigger
 
   private def execCommand(command: String, workingDirectory: File) = Def.task {
-    val application = command.takeWhile(_ != ' ')
-    val arguments   = command.drop(application.length).trim
-    val process     = Process(Seq(application, arguments), workingDirectory)
-    val exitCode    = (process !)
+    val commandSeq =
+      command.split(" ").filterNot(_.isBlank) // TODO: Intelligent split for "options with spaces"
+    println(commandSeq)
+    val process    = Process(commandSeq, workingDirectory)
+    val exitCode   = (process !)
     if (exitCode != 0)
       throw new RuntimeException(s"Command '$command' failed with exit code $exitCode")
   }
+
+  lazy val Rust = config("rust")
 
   override lazy val projectSettings = {
     inConfig(Rust)(
@@ -88,48 +86,47 @@ object RustPlugin extends AutoPlugin {
         runOptions     := ""
       )
     ) ++ Seq(
-      useCargo := (Rust / tooling).value == CargoPackageManager
-    ) ++ Seq(
       rustClean      := Def.taskDyn {
-        val useCargoV = useCargo.value
-        val command   = if (useCargoV) "cargo clean" else "trunk clean"
+        val useCargo = (Rust / tooling).value == CargoPackageManager
+        val command  = if (useCargo) "cargo clean" else "trunk clean"
         execCommand(command, thisProject.value.base)
       }.value,
       rustCargoClean := Def.taskDyn {
         execCommand("cargo clean", thisProject.value.base)
       }.value,
       rustBuild      := Def.taskDyn {
-        val useCargoV    = useCargo.value
+        val useCargo     = (Rust / tooling).value == CargoPackageManager
         val cargoCommand = s"cargo ${(Rust / debugOptions).value} build"
         val trunkCommand = s"trunk ${(Rust / debugOptions).value} build"
-        val command      = if (useCargoV) cargoCommand else trunkCommand
+        val command      = if (useCargo) cargoCommand else trunkCommand
         execCommand(command, thisProject.value.base)
       }.value,
       rustTest       := Def.taskDyn {
         execCommand("cargo test", thisProject.value.base)
       }.value,
       rustRun        := Def.taskDyn {
-        val useCargoV    = useCargo.value
+        val useCargo     = (Rust / tooling).value == CargoPackageManager
         val cargoCommand = s"cargo run ${(Rust / runOptions).value}"
-        val trunkCommand = s"trunk serve ${(Rust / runOptions).value}"
-        val command      = if (useCargoV) cargoCommand else trunkCommand
+        val trunkCommand =
+          s"trunk serve ${(Rust / runOptions).value}" // TODO: Somehow allow ability to force exit
+        val command = if (useCargo) cargoCommand else trunkCommand
         execCommand(command, thisProject.value.base)
       }.value,
       rustRelease    := Def.taskDyn {
-        val useCargoV    = useCargo.value
+        val useCargo     = (Rust / tooling).value == CargoPackageManager
         val cargoCommand = s"cargo ${(Rust / releaseOptions).value} build --release"
         val trunkCommand = s"trunk ${(Rust / releaseOptions).value} build --release"
-        val command      = if (useCargoV) cargoCommand else trunkCommand
+        val command      = if (useCargo) cargoCommand else trunkCommand
         execCommand(command, thisProject.value.base)
       }.value,
       rustPackage    := Def.taskDyn {
         execCommand("cargo package", thisProject.value.base)
       }.value,
       rustConfig     := Def.taskDyn {
-        val useCargoV    = useCargo.value
-        val cargoCommand = "cargo config get"
+        val useCargo     = (Rust / tooling).value == CargoPackageManager
+        val cargoCommand = "cargo --list" // TODO: Implement when fix released.
         val trunkCommand = "trunk config show"
-        val command      = if (useCargoV) cargoCommand else trunkCommand
+        val command      = if (useCargo) cargoCommand else trunkCommand
         execCommand(command, thisProject.value.base)
       }.value,
       rustDoc        := Def.taskDyn {
