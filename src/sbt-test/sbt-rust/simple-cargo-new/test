@@ -13,15 +13,14 @@ $ exists target-cargo/release/simple-cargo-new.d
 > rustConfig
 > rustDoc
 $ exists target-cargo/doc/simple_cargo_new/index.html
-# TODO: Restore
-# > clean
-# $ absent target-cargo/debug/simple-cargo-new.d
-# $ absent target-cargo/release/simple-cargo-new.d
-# $ absent target-cargo/doc/simple_cargo_new/index.html
-# > compile
-# $ exists target-cargo/debug/simple-cargo-new.d
-# > test
-# > run
-# > package
-# > doc
-# $ exists target-cargo/doc/simple_cargo_new/index.html
+> clean
+$ absent target-cargo/debug/simple-cargo-new.d
+$ absent target-cargo/release/simple-cargo-new.d
+$ absent target-cargo/doc/simple_cargo_new/index.html
+> compile
+$ exists target-cargo/debug/simple-cargo-new.d
+> test
+> run
+> package
+> doc
+$ exists target-cargo/doc/simple_cargo_new/index.html

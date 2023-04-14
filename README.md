@@ -1,25 +1,5 @@
 # sbt-rust
 
-# *** note ***
-
-## Update 12-Apr-2023
-
-This plugin started development in April-2023. This is currently being actively developed. Contributions are welcome.
-
-Quick tests on another project (12-April-2023) show that the rust commands are invoked.
-
-Known issue:
-
-  * rustRun with trunk tooling won't stop the server.
-  * pure sbt commands not yet implemented.
-
-Further testing will continue and enhancements made.
-
-If you're happy to try this plugin please do. I'm happy to get feedback. Still expecting a fair amount of work, so 
-the warning still exists to try the plugin at your own peril.
-
-# *** /note ***
-
 [![BSD 3 Clause License](https://img.shields.io/github/license/nigeleke/sbt-rust?style=plastic)](https://github.com/nigeleke/sbt-rust/blob/master/LICENSE)
 [![Language](https://img.shields.io/badge/language-Scala-blue.svg?style=plastic)](https://www.scala-lang.org)
 [![Build](https://img.shields.io/github/actions/workflow/status/nigeleke/sbt-rust/acceptance.yml?style=plastic)](https://github.com/nigeleke/sbt-rust/actions/workflows/acceptance.yml)
@@ -109,10 +89,9 @@ lazy val ui = project
   .settings(
     name := "myproject-ui",
     Rust / tooling             := TrunkPackageManager, // optional, default. Allowed CargoPackageManager or TrunkPackageManager
-    Rust / cargoDebugOptions   := "",   // optional, default
-    Rust / cargoReleaseOptions := "",   // optional, default
-    Rust / trunkDebugOptions   := "",   // optional, default
-    Rust / trunkReleaseOptions := "",   // optional, default
+    Rust / debugOptions   := "",   // optional, default
+    Rust / releaseOptions := "",   // optional, default
+    Rust / runOptions     := "",   // optional, default
     ...
   )
 ```
@@ -121,6 +100,16 @@ The folder layout and files within the `ui` folder are expected to match the `ca
 layout. As such, the `cargo` or `trunk` tooling can continue to be used independently. (Consideration was given
 to forcing the standard using `src/main/rust` folder structure but this was rejected as being too opinionated, and
 not inline with the defaults of the underlying `cargo` and `trunk` tooling)
+
+## Known Issues
+
+* `Ctrl-c` out of `rustRun` (with the `TrunkPackageManager`) doesn't stop the server.
+
+## TODOs
+
+* Handled ctrl-c cancel of tasks (see above)
+* Implement generic run command
+* Publish to public package repository
 
 ## Plugin Development
 
@@ -156,3 +145,7 @@ to generate workflows for GitHub actions. For full details of how to use it [rea
    c. 404 - https://github.com/jeffreyolchovy/sbt-rustup/blob/master/src/main/scala/sbtrustup/RustupPlugin.scala
 
 2. [Pritam Kadam - Write & test your own scala SBT plugin…](https://medium.com/@phkadam2008/write-test-your-own-scala-sbt-plugin-6701b0e36a62)
+
+3. [Stackoverflow: Running custom sbt plugin task for one project in a multi-project build.sbt](https://stackoverflow.com/questions/75973944/running-custom-sbt-plugin-task-for-one-project-in-a-multi-project-build-sbt)
+
+4. [Stackoverflow: How can I use sbt commands like clean and compile in my custom sbt plugin](https://stackoverflow.com/questions/76002618/how-can-i-use-sbt-commands-like-clean-and-compile-in-my-custom-sbtplugin)

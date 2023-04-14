@@ -12,6 +12,7 @@ class RustPluginSpec extends AnyWordSpec with Matchers {
   "RustPlugin" should {
 
     "expect nine rustSomething sbt commands" in {
+      println(projectSettings.map(_.toString()).mkString("\n"))
       val rustCommands =
         projectSettings.map(_.toString).filter(_.contains("This / This / This,rust"))
       println(rustCommands.mkString("\n"))
@@ -36,12 +37,12 @@ class RustPluginSpec extends AnyWordSpec with Matchers {
       "rustPackage" in { assertExists("rustPackage") }
       "rustConfig" in { assertExists("rustConfig") }
       "rustDoc" in { assertExists("rustDoc") }
-      "clean" ignore { assertExists("clean") }
-      "compile" ignore { assertExists("compile") }
-      "test" ignore { assertExists("test") }
-      "run" ignore { assertExists("run") }
-      "package" ignore { assertExists("package") }
-      "doc" ignore { assertExists("doc") }
+      "clean" in { assertExists("clean") }
+      "compile" in { assertExists("compile") }
+      "test" in { assertExists("test") }
+      "run" in { assertExists("run") }
+      "package" in { assertExists("package") }
+      "doc" in { assertExists("doc") }
 
     }
 

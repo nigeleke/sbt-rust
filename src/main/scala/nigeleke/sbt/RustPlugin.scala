@@ -44,7 +44,6 @@ object RustPlugin extends AutoPlugin {
 
   object autoImport {
     val tooling        = settingKey[PackageManager]("Cargo or Trunk. Default TrunkPackageManager")
-      .withRank(KeyRanks.Invisible)
     val debugOptions   = settingKey[String]("Options for 'cargo' or 'trunk build'")
     val releaseOptions = settingKey[String]("Options for 'cargo' or 'trunk build --release'")
     val runOptions     = settingKey[String]("Options to pass to 'cargo run' or 'trunk serve'")
@@ -57,18 +56,16 @@ object RustPlugin extends AutoPlugin {
     val rustPackage    = taskKey[Unit]("Package program using cargo package or trunk package.")
     val rustConfig     = taskKey[Unit]("Show the current configuration.")
     val rustDoc        = taskKey[Unit]("Generate documentation using cargo doc or trunk doc.")
-//    val clean               = taskKey[Unit]("Generic clean command")
   }
 
   import autoImport._
 
-  override def requires = empty
+  override def requires = plugins.JvmPlugin
   override def trigger  = noTrigger
 
   private def execCommand(command: String, workingDirectory: File) = Def.task {
     val commandSeq =
       command.split(" ").filterNot(_.isBlank) // TODO: Intelligent split for "options with spaces"
-    println(commandSeq)
     val process    = Process(commandSeq, workingDirectory)
     val exitCode   = (process !)
     if (exitCode != 0)
@@ -131,14 +128,12 @@ object RustPlugin extends AutoPlugin {
       }.value,
       rustDoc        := Def.taskDyn {
         execCommand("cargo doc", thisProject.value.base)
-      }.value
-////      clean          := println(s"${thisProject.value}\n\n"),
-////      // ((ThisBuild / clean) dependsOn rustClean).value,
-////      compile        := ((Compile / compile) dependsOn rustBuild).value,
-////      test           := ((Test / test) dependsOn rustTest).value,
-////      run            := ((ThisProject / run) dependsOn rustRun),
-////      Keys.`package` := ((Compile / Keys.`package`) dependsOn rustPackage).value,
-////      doc            := ((Compile / doc) dependsOn rustDoc).value
+      }.value,
+      clean          := (Compile / clean).dependsOn(rustClean).value,
+      compile        := (Compile / compile).dependsOn(rustBuild).value,
+      test           := (Test / test).dependsOn(rustTest).value,
+      Keys.`package` := (Compile / Keys.`package`).dependsOn(rustPackage).value,
+      doc            := (Compile / doc).dependsOn(rustDoc).value
     )
 
   }

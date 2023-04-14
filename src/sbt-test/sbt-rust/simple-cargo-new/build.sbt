@@ -7,5 +7,6 @@ lazy val root = (project in file("."))
   .enablePlugins(RustPlugin)
   .settings(
     name           := "test",
-    Rust / tooling := CargoPackageManager
+    Rust / tooling := CargoPackageManager,
+    run            := {}
   )
