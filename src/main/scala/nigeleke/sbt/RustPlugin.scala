@@ -31,10 +31,11 @@
 package nigeleke.sbt
 
 import sbt.*
-import Keys.*
+import sbt.Keys.*
 
 import scala.language.postfixOps
 import scala.sys.process.*
+import scala.util.*
 
 object RustPlugin extends AutoPlugin {
 
@@ -64,12 +65,18 @@ object RustPlugin extends AutoPlugin {
   override def trigger  = noTrigger
 
   private def execCommand(command: String, workingDirectory: File) = Def.task {
-    val commandSeq =
-      command.split(" ").filterNot(_.isBlank) // TODO: Intelligent split for "options with spaces"
-    val process    = Process(commandSeq, workingDirectory)
-    val exitCode   = (process !)
-    if (exitCode != 0)
-      throw new RuntimeException(s"Command '$command' failed with exit code $exitCode")
+    // TODO: Intelligent split for "options with spaces"
+    val commandSeq = command.split(" ").filterNot(_.isBlank)
+    val builder    = Process(commandSeq, workingDirectory)
+    val process    = builder.run()
+
+    try {
+      val exitCode = process.exitValue()
+      if (exitCode != 0)
+        throw new RuntimeException(s"Command '$command' failed with exit code $exitCode")
+    } finally {
+      if (process.isAlive()) process.destroy()
+    }
   }
 
   lazy val Rust = config("rust")
