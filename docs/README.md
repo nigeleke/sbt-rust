@@ -101,14 +101,9 @@ layout. As such, the `cargo` or `trunk` tooling can continue to be used independ
 to forcing the standard using `src/main/rust` folder structure but this was rejected as being too opinionated, and
 not inline with the defaults of the underlying `cargo` and `trunk` tooling)
 
-## Known Issues
-
-* `Ctrl-c` out of `rustRun` (with the `TrunkPackageManager`) doesn't stop the server.
-
 ## TODOs
 
-* Handled ctrl-c cancel of tasks (see above)
-* Implement generic run command
+* Implement rustRun within generic run command
 * Publish to public package repository
 
 ## Plugin Development
