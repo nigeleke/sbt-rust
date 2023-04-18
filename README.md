@@ -18,24 +18,25 @@ built with [Cargo](https://doc.rust-lang.org/cargo/) or [Yew](https://yew.rs/) p
 The plugin attempts to use the `trunk` package manager by default. This default can be overridden by
 setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then be used.
 
-| Command            | CargoPackageManager       | TrunkPackageManager       | sbt Command |
-|--------------------|---------------------------|---------------------------|-------------|
-| rustClean          | cargo clean               | trunk clean               | clean       |
-| rustCargoClean [1] | cargo clean               | cargo clean               |             |
-| rustBuild          | cargo [2] build           | trunk [2] build           | compile     |
-| rustTest           | cargo test                | cargo test                | test        |
-| rustRun            | cargo run [3]             | trunk serve [3, 4]        | run         |
-| rustRelease        | cargo [5] build --release | trunk [5] build --release |             |
-| rustPackage        | cargo package             | cargo package             | package     |
-| rustConfig         | cargo config get [6]      | trunk config show         |             |
-| rustDoc            | cargo doc                 | cargo doc                 | doc         |
+| Command            | CargoPackageManager       | TrunkPackageManager   | sbt Command |
+|--------------------|---------------------------|-----------------------|-------------|
+| rustClean          | cargo clean [1]           | trunk clean           | clean       |
+| rustCargoClean [2] | cargo clean [1]           | cargo clean [1]       |             |
+| rustBuild          | cargo build [3]           | trunk  build          | compile     |
+| rustTest           | cargo test                | cargo test            | test        |
+| rustRun            | cargo run [4]             | trunk serve [5]       | run         |
+| rustRelease        | cargo build [6] --release | trunk build --release |             |
+| rustPackage        | cargo package             | cargo package         | package     |
+| rustConfig         | cargo config get [7]      | trunk config show     |             |
+| rustDoc            | cargo doc                 | cargo doc             | doc         |
 
-    [1] Forces cargo clean when using trunk package manager (trunk clean delete dist folder, but not target folder contents)
-    [2] Rust / debugOptions
-    [3] Rust / runOptions
-    [4] Waits for server to exit.
-    [5] Rust / releaseOptions
-    [6] Requires nightly build (as stands in April 2023)
+    [1] Rust / cleanOptions
+    [2] Forces cargo clean when using trunk package manager (trunk clean delete dist folder, but not target folder contents)
+    [3] Rust / debugOptions
+    [4] Rust / runOptions
+    [5] Waits for server to exit.
+    [6] Rust / releaseOptions
+    [7] Requires nightly build (as stands in April 2023)
 
 ## Motivation
 

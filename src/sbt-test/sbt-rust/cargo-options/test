@@ -1,0 +1,26 @@
+> rustClean
+$ absent target-cargo-01/debug/simple-cargo-options.d
+$ absent target-cargo-01/release/simple-cargo-options.d
+$ absent target-cargo-01/doc/simple_cargo_options/index.html
+> rustCargoClean
+> rustBuild
+$ exists target-cargo-01/debug/simple-cargo-options.d
+> rustTest
+> rustRun
+> rustRelease
+$ exists target-cargo-01/release/simple-cargo-options.d
+> rustPackage
+> rustConfig
+> rustDoc
+$ exists target-cargo-01/doc/simple_cargo_options/index.html
+> clean
+$ absent target-cargo-01/debug/simple-cargo-options.d
+$ absent target-cargo-01/release/simple-cargo-options.d
+$ absent target-cargo-01/doc/simple_cargo_options/index.html
+> compile
+$ exists target-cargo-01/debug/simple-cargo-options.d
+> test
+> run
+> package
+> doc
+$ exists target-cargo-01/doc/simple_cargo_options/index.html
