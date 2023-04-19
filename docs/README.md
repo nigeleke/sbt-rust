@@ -19,7 +19,7 @@ The plugin attempts to use the `trunk` package manager by default. This default 
 setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then be used.
 
 | Command            | CargoPackageManager       | TrunkPackageManager   | sbt Command |
-|--------------------|---------------------------|-----------------------|-------------|
+| ------------------ | ------------------------- | --------------------- | ----------- |
 | rustClean          | cargo clean [1]           | trunk clean           | clean       |
 | rustCargoClean [2] | cargo clean [1]           | cargo clean [1]       |             |
 | rustBuild          | cargo build [3]           | trunk  build          | compile     |
@@ -31,10 +31,10 @@ setting `Rust / tooling := CargoPackageManager`, in which case `cargo` will then
 | rustDoc            | cargo doc                 | cargo doc             | doc         |
 
     [1] Rust / cleanOptions
-    [2] Forces cargo clean when using trunk package manager (trunk clean delete dist folder, but not target folder contents)
+    [2] Forces cargo clean when using trunk package manager (trunk clean deletes dist folder, but not target folder contents)
     [3] Rust / debugOptions
     [4] Rust / runOptions
-    [5] Waits for server to exit.
+    [5] Waits for server to exit or ctrl-c from the user. The ctrl-c will abort the server process.
     [6] Rust / releaseOptions
     [7] Requires nightly build (as stands in April 2023)
 
@@ -54,6 +54,8 @@ plugin used if desired. The expected folder structure for this is demonstrated i
 [Rust](https://www.rust-lang.org), [Cargo](https://doc.rust-lang.org/cargo/), [Yew](https://yew.rs/) and / or
 [Trunk](https://trunkrs.dev/) must be installed independently (as required) and their binaries accessible on
 the current PATH.
+
+The plugin is not currently published in the Maven Repository (or similar), however it is easy enough to build and publish locally, as shown below:
 
 ```bash
 git clone https://github.com/nigeleke/sbt-rust.git
@@ -102,11 +104,6 @@ layout. As such, the `cargo` or `trunk` tooling can continue to be used independ
 to forcing the standard using `src/main/rust` folder structure but this was rejected as being too opinionated, and
 not inline with the defaults of the underlying `cargo` and `trunk` tooling)
 
-## TODOs
-
-* Implement rustRun within generic run command
-* Publish to public package repository
-
 ## Plugin Development
 
 This plugin requires sbt 1.0.0+
@@ -116,19 +113,6 @@ This plugin requires sbt 1.0.0+
 Run `test` for regular unit tests.
 
 Run `scripted` for [sbt script tests](http://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html).
-
-### CI
-
-The generated project uses [sbt-github-actions](https://github.com/djspiewak/sbt-github-actions) as a plugin
-to generate workflows for GitHub actions. For full details of how to use it [read this](https://github.com/djspiewak/sbt-github-actions/blob/main/README.md)
-
-### Publishing
-
-1. Publish your source to GitHub
-2. Follow the instructions in [sbt-ci-release](https://github.com/olafurpg/sbt-ci-release/blob/main/readme.md) to create a sonatype account and setup your keys
-3. `sbt ci-release`
-4. [Add your plugin to the community plugins list](https://github.com/sbt/website#attention-plugin-authors)
-5. [Claim your project in Scaladex](https://github.com/scalacenter/scaladex-contrib#claim-your-project)
 
 ## Acknowledgements
 
