@@ -65,26 +65,25 @@ object RustPlugin extends AutoPlugin {
   override def requires = plugins.JvmPlugin
   override def trigger  = noTrigger
 
-  private def execCommand(command: String, workingDirectory: File) = Def.task {
-    // TODO: Intelligent split for "options with spaces"
-    val commandSeq    = command.split(" ").filterNot(_.isBlank)
-    val commandSeqStr = commandSeq.mkString("'", "', '", "'")
-    println(s"Executing $commandSeqStr")
-    val builder       = Process(commandSeq, workingDirectory)
-    val process       = builder.run()
+  private def execCommand(command: String, workingDirectory: File): Def.Initialize[Task[Unit]] =
+    Def.task {
+      val builder = Process(command, workingDirectory)
+      val process = builder.run()
 
-    def destroyProcess(): Unit = if (process.isAlive()) process.destroy()
+      scala.sys.addShutdownHook { destroyProcess() }
 
-    try {
-      val exitCode = process.exitValue()
-      if (exitCode != 0)
-        throw new RuntimeException(s"Command '$command' failed with exit code $exitCode")
-    } catch {
-      case _: InterruptedException => destroyProcess()
-    } finally {
-      destroyProcess()
+      def destroyProcess() = if (process.isAlive()) process.destroy()
+
+      try {
+        val exitCode = process.exitValue()
+        if (exitCode != 0)
+          throw new RuntimeException(s"Command '$command' failed with exit code $exitCode")
+      } catch {
+        case _: InterruptedException => destroyProcess()
+      } finally {
+        destroyProcess()
+      }
     }
-  }
 
   lazy val Rust = config("rust")
 
