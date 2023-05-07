@@ -122,7 +122,7 @@ object RustPlugin extends AutoPlugin {
       rustRun        := Def.taskDyn {
         val useCargo     = (Rust / tooling).value == CargoPackageManager
         val cargoCommand = s"cargo run ${(Rust / runOptions).value}"
-        val trunkCommand = s"trunk serve"
+        val trunkCommand = s"trunk serve ${(Rust / runOptions).value}"
         val command      = if (useCargo) cargoCommand else trunkCommand
         execCommand(command, thisProject.value.base)
       }.value,
