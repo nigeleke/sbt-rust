@@ -4,7 +4,7 @@ ThisBuild / homepage         := Some(url("https://nigeleke.github.io/sbt-rust"))
 
 val bsd3License = Some(HeaderLicense.BSD3Clause("2023", "Nigel Eke"))
 
-val scalatestVersion = "3.2.15"
+val scalatestVersion = "3.2.16"
 
 publishTo := Some(
   Resolver.file(
