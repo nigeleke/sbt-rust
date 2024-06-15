@@ -11,7 +11,6 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = [
-          pkgs.vscode
           pkgs.dotty
           pkgs.sbt
         ];
