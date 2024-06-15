@@ -7,7 +7,7 @@ $ absent target-trunk-01/doc/simple_trunk_options/index.html
 $ exists target-trunk/wasm32-unknown-unknown/debug/simple-trunk-options.wasm
 $ exists dist/index.html
 > rustTest
-# Cannot run as trunk serve will wait...
+# Cannot run because trunk serve will wait...
 # > rustRun
 $ delete dist/index.html
 > rustRelease
@@ -28,7 +28,7 @@ $ absent target-trunk-01/doc/simple_trunk_options/index.html
 > compile
 $ exists target-trunk/wasm32-unknown-unknown/debug/simple-trunk-options.wasm
 > test
-# Cannot run as trunk serve will wait...
+# Cannot run because trunk serve will wait...
 # > run
 > package
 > doc

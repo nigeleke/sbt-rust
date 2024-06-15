@@ -11,7 +11,7 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = [
-          pkgs.dotty
+          pkgs.scala_3
           pkgs.sbt
         ];
       };
